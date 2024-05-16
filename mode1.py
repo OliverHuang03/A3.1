@@ -1,5 +1,6 @@
 from landsites import Land
 from data_structures.bst import BinarySearchTree
+from data_structures.hash_table import LinearProbeTable
 
 
 class Mode1Navigator:
@@ -60,10 +61,15 @@ class Mode1Navigator:
         """
         Student-TODO: Best/Worst Case
         """
+        key = land.get_guardians()/land.get_gold()
 
         land.set_gold(new_reward)
         land.set_guardians(new_guardians)
 
+        del self.sites_tree[key]
+
+        new_key = land.get_guardians()/land.get_gold()
+        self.sites_tree[new_key] = land
+
     def reward(self, gold: float, guardians: int, adventurers: int) -> float:
         return min(adventurers*gold/guardians, gold)
-
