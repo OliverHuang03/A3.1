@@ -1,17 +1,23 @@
 from landsites import Land
 from data_structures.bst import BinarySearchTree
-from data_structures.hash_table import LinearProbeTable
 
 
 class Mode1Navigator:
     """
-    Student-TODO: short paragraph as per
-    https://edstem.org/au/courses/14293/lessons/46720/slides/318306
+    This class uses a binary search tree to store the sites.  Each site was ranked based on the ratio of gold to
+    guardians,in order to maximise the amount of gold obtained per adventurer sent.  For example, a site with 300
+    gold and 100 guardians will obtain 3 gold per adventurer lost, compared to a site with 250 gold and 100
+    guardians which will obtain 2.5 gold per adventurer lost.  This meets the complexity of respective methods
+    since the tree is populated in O(N*log(N)) time and items can be added, searched or deleted in O(log(N)).
+    This is because the tree is assumed to have log(N) depth.
+
+    All methods and operations are O(1) unless specified
     """
 
     def __init__(self, sites: list[Land], adventurers: int) -> None:
         """
-        Student-TODO: Best/Worst Case
+        BC/WC: O(N*log(N))
+        - N is the number of sites
         """
         self.adventurers = adventurers
         self.sites_tree = BinarySearchTree()
@@ -21,7 +27,9 @@ class Mode1Navigator:
 
     def select_sites(self) -> list[tuple[Land, int]]:
         """
-        Student-TODO: Best/Worst Case
+        BC: O(log(N)) time to retrieve item if no adventurers left after first site
+        WC: O(N) time to iterate through all sites.  Dominates O(log(N)) time required to find starting site.
+        - N is the number of sites
         """
         sites_list = []
         adventurers_left = self.adventurers
@@ -37,7 +45,10 @@ class Mode1Navigator:
 
     def select_sites_from_adventure_numbers(self, adventure_numbers: list[int]) -> list[float]:
         """
-        Student-TODO: Best/Worst Case
+        BC: O(A*log(N)) since runs self.select_sites() A times
+        WC: O(A*N) since runs self.select_sites() A times
+        - A is the number of teams
+        - N is the number of sites
         """
         score_list = []
         original_num_adventurers = self.adventurers
@@ -59,7 +70,7 @@ class Mode1Navigator:
 
     def update_site(self, land: Land, new_reward: float, new_guardians: int) -> None:
         """
-        Student-TODO: Best/Worst Case
+        BC/WC: O(log(N)) to del and to set item
         """
         key = land.get_guardians()/land.get_gold()
 

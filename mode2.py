@@ -4,37 +4,47 @@ from data_structures.hash_table import LinearProbeTable
 
 class Mode2Navigator:
     """
-    Student-TODO: short paragraph as per
-    https://edstem.org/au/courses/14293/lessons/46720/slides/318306
+    This class uses a linear probe table to store sites and a max heap to sort them in order of potential score.
+    For each day simulated, the score of each site must be calculated and organised since this is depended on
+    the number of adventurers sent.  By using the heapify method, this can be done in O(N) time.  After a site
+    has been looted, the gold and guardians present must be updated and added back in the correct position, which
+    will take O(log(N)) time since the tree is always balanced.  The hash table was chosen since items can be
+    added, searched or deleted in O(1) time.
+
+    All methods and operations are O(1) unless specified
     """
 
     def __init__(self, n_teams: int) -> None:
         """
-        Student-TODO: Best/Worst Case
+        BC/WC: O(1) since all operations are O(1)
         """
         self.n_teams = n_teams
         self.sites = LinearProbeTable()
 
     def add_sites(self, sites: list[Land]) -> None:
         """
-        Student-TODO: Best/Worst Case
+        BC/WC: O(S)
+        - S is the number of sites to be added
         """
         for site in sites:
             self.sites[site.get_name()] = site
 
     def simulate_day(self, adventurer_size: int) -> list[tuple[Land | None, int]]:
         """
-        Student-TODO: Best/Worst Case
+        BC: O(N + K) when each team fully ransacks a site
+        WC: O(N + K*log(N)) when each site needs to be added back to the heap
+        - N is the number of sites
+        - K is the number of team
         """
         score_list = []
-        self.construct_score_data_structure(adventurer_size)
+        self.construct_score_data_structure(adventurer_size) # O(N)
 
-        for _ in range(self.n_teams):
+        for _ in range(self.n_teams): # runs K number of times
             if self.sites.is_empty():
                 score_list.append((None, 0))
 
             else:
-                score, adventurers_left, site = self.sites_heap.get_max()
+                score, adventurers_left, site = self.sites_heap.get_max() # O(log(N)) for sinking of new root
                 del self.sites[site.get_name()]
 
                 if score > 2.5 * adventurer_size:
@@ -50,7 +60,7 @@ class Mode2Navigator:
                 if site.get_guardians() > 0:
                     score, adventurers_left = self.compute_score(adventurer_size, site)
                     self.sites[site.get_name()] = site
-                    self.sites_heap.add((score, adventurers_left, site))
+                    self.sites_heap.add((score, adventurers_left, site)) # O(log(N)) for rising of new item
 
         return score_list
 
@@ -66,6 +76,10 @@ class Mode2Navigator:
         return score, adventurers_left
     
     def construct_score_data_structure(self, adventurer_size: int) -> None:
+        """
+        BC/WC: O(N) since heapify is done in O(N) time
+        - N is the number of sites
+        """
         self.sites_heap = MaxHeap(len(self.sites))
         scored_sites = []
         for site in self.sites.values():
